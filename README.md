@@ -19,6 +19,7 @@ The placeholders in the format string are marked by "%" and are followed by one 
     * e — print a float as scientific notation
     * u — print an integer as an unsigned decimal number
     * f — print a float as is
+    * j — print JSON of an object
     * o — print an integer as an octal number
     * O — print JSON of an object 
     * s — print a string as is

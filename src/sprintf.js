@@ -31,7 +31,7 @@ sprintf.chr_repeat = function(chr, n){
     if (r && r.length>=n)
 	return r.slice(0, n);
     r = chr;
-    for (; r.length<n; r += r);
+    for (; r.length<n; r += r) {}
     chr_repeat_cache[chr] = r;
     return r.slice(0, n);
 };
@@ -47,7 +47,7 @@ sprintf.parse = function(fmt){
 	else if ((match = /^%%/.exec(_fmt)))
 	    f += 'out += "%";\n';
 	else if ((match =
-	    /^%(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([bcdefoOsuxX])/
+	    /^%(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([bcdefjoOsuxX])/
 	    .exec(_fmt)))
 	{
 	    var positional = match[1], keyword = match[2], sign = match[3];
@@ -88,7 +88,7 @@ sprintf.parse = function(fmt){
 		f += 'arg = argv['+positional+'];\n';
 	    else /* positional argument (implicit) */
 		f += 'arg = argv['+(cursor++)+'];\n';
-	    if (/[^sO]/.test(conversion))
+	    if (/[^jsO]/.test(conversion))
 		f += 'arg = +arg;\n';
 	    switch (conversion)
 	    {
@@ -107,8 +107,10 @@ sprintf.parse = function(fmt){
 		else
                     f += 'arg_s = ""+arg;\n';
 		break;
+	    case 'j':
+	    case 'O':
+		f += 'arg_s = JSON.stringify(arg);\n'; break;
 	    case 'o': f += 'arg_s = arg.toString(8);\n'; break;
-	    case 'O': f += 'arg_s = JSON.stringify(arg);\n'; break;
             case 'u': f += 'arg = arg >>> 0; arg_s = ""+arg;\n'; break;
 	    case 'x': f += 'arg_s = arg.toString(16);\n'; break;
 	    case 'X': f += 'arg_s = arg.toString(16).toUpperCase();\n'; break;
